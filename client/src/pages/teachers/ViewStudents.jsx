@@ -1,51 +1,32 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { getFormattedDate } from './Filterdatetime';
+import GetStudents from './students';
 
 const ViewStudents = () => {
-  const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [genderFilter, setGenderFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
 
-  useEffect(() => {
-    const getUsers = async () => {
-      try {
-        const res = await axios.get('http://localhost:5000/api/protected/getusers');
-        if (res.data.error) {
-          throw new Error(res.data.error);
-        }
-        setUsers(res.data);
-      } catch (error) {
-        setError(error.message);
-        console.error(error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    getUsers();
-  }, []);
+  const { students, loading, error } = GetStudents();
 
-  const filteredUsers = users.filter((user) => {
+  const filteredStudents = students.filter((student) => {
     const matchesSearchTerm =
-
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.mobile.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.userId.toLowerCase().includes(searchTerm.toLowerCase());
+      student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      student.mobile.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      student.userId.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesGenderFilter =
-      genderFilter === 'All' || user.gender.toLowerCase() === genderFilter.toLowerCase();
+      genderFilter === 'All' || student.gender.toLowerCase() === genderFilter.toLowerCase();
 
     const matchesStatusFilter =
-      statusFilter === 'All' || (statusFilter === 'true' && user.active) || (statusFilter === 'false' && !user.active);
+      statusFilter === 'All' || (statusFilter === 'true' && student.active) || (statusFilter === 'false' && !student.active);
 
     return matchesSearchTerm && matchesGenderFilter && matchesStatusFilter;
   });
 
-  if (isLoading) {
+  if (loading) {
     return <p>Loading...</p>;
   }
 
@@ -56,7 +37,6 @@ const ViewStudents = () => {
   return (
     <section className="container p-4 mx-auto overflow-hidden">
       <div className="flex flex-col">
-        {/* Filters */}
         <div className="flex items-center justify-between mb-4">
           <input
             type="text"
@@ -87,7 +67,7 @@ const ViewStudents = () => {
           </select>
         </div>
 
-        {/* Users Table */}
+        {/* Students Table */}
         <div className="-mx-2 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle md:px-6">
             <div className="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
@@ -110,7 +90,7 @@ const ViewStudents = () => {
                       Status
                     </th>
                     <th scope="col" className="px-16 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                      Users
+                      Students
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
                       Gender
@@ -130,15 +110,15 @@ const ViewStudents = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
-                  {filteredUsers.map((user, id) => {
-                    const formattedCreatedAt = getFormattedDate(user.createdAt);
-                    const formattedUpdatedAt = getFormattedDate(user.updatedAt);
-                    const formattedDOB = getFormattedDate(user.dob);
+                  {filteredStudents.map((student, id) => {
+                    const formattedCreatedAt = getFormattedDate(student.createdAt);
+                    const formattedUpdatedAt = getFormattedDate(student.updatedAt);
+                    const formattedDOB = getFormattedDate(student.dob);
                     return (
                       <tr key={id}>
                         <td className="px-4 py-4 text-sm font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">
                           <div className="inline-flex items-center gap-x-3">
-                            <span>{user.userId}</span>
+                            <span>{student.userId}</span>
                           </div>
                         </td>
                         <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
@@ -149,15 +129,15 @@ const ViewStudents = () => {
                         </td>
                         <td className="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                           <div
-                            className={`inline-flex items-center rounded-full gap-x-2 ${user.active ? 'bg-emerald-100/60 dark:bg-gray-800' : 'bg-red-100/60 dark:bg-gray-800'
+                            className={`inline-flex items-center rounded-full gap-x-2 ${student.active ? 'bg-emerald-100/60 dark:bg-gray-800' : 'bg-red-100/60 dark:bg-gray-800'
                               }`}
                           >
                             <span
-                              className={`h-1.5 w-1.5 rounded-full ${user.active ? 'bg-emerald-500' : 'bg-red-500'
+                              className={`h-1.5 w-1.5 rounded-full ${student.active ? 'bg-emerald-500' : 'bg-red-500'
                                 }`}
                             ></span>
                             <h2
-                              className={`text-sm font-normal ${user.active ? 'text-emerald-500' : 'text-red-500'
+                              className={`text-sm font-normal ${student.active ? 'text-emerald-500' : 'text-red-500'
                                 }`}
                             >
                             </h2>
@@ -168,27 +148,27 @@ const ViewStudents = () => {
                           <button className="flex items-center gap-x-2">
                             <img
                               className="object-cover w-10 h-10 rounded-full"
-                              src={user.avatar}
+                              src={student.avatar}
                               alt=""
                             />
                             <div>
                               <h2 className="text-sm font-medium text-gray-800 dark:text-white">
-                                {user.name}
+                                {student.name}
                               </h2>
                               <p className="text-xs font-normal text-gray-600 dark:text-gray-400">
-                                {user.email}
+                                {student.email}
                               </p>
                             </div>
                           </button>
                         </td>
                         <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                          {user.gender}
+                          {student.gender}
                         </td>
                         <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                          {user.mobile}
+                          {student.mobile}
                         </td>
                         <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                          {user.father_name}
+                          {student.father_name}
                         </td>
                         <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
                           {formattedDOB}

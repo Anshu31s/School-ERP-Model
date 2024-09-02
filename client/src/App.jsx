@@ -31,7 +31,7 @@ function App() {
             <Route path="schedule" element={<Schedule />} />
             <Route path="attendance" element={<Attendance />} />
             <Route path="reports" element={<Uploadmarks />} />
-            <Route path="search" element={<ViewStudents />} />
+            <Route path="Students" element={<ViewStudents />} />
             <Route path="profile" element={<Profile />} />
             <Route path="" element={<Navigate to="home" />} />
           </Route>
