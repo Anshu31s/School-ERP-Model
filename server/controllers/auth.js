@@ -43,13 +43,13 @@ const registerStudent = async (req, res) => {
 
     const userId = generateUserId('stu');
     const hashedPassword = await hashPassword(userId);
-    const current_session = currentSession;
+    const session = currentSession;
 
 
     const NewStudent = new Student({
       name, email, userId, password: hashedPassword, dob, gender, blood, mobile,
       father_name, mother_name, father_mobile, mother_mobile, current_address,
-      current_class, current_session,
+      current_class, session,
     });
 
     const NewUser = new User({ userId, password: hashedPassword, userType: 'student' });

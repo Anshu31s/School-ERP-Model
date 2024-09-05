@@ -69,7 +69,7 @@ const StudentSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Current address is required'],
   },
-  grade: {
+  current_class: {
     type: String,
   },
   session: {
