@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { getFormattedDate } from './Filterdatetime';
 import GetStudents from './students';
@@ -67,7 +66,7 @@ const ViewStudents = () => {
           </select>
         </div>
 
-        {/* Students Table */}
+        {/* Table */}
         <div className="-mx-2 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle md:px-6">
             <div className="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
@@ -109,6 +108,7 @@ const ViewStudents = () => {
                     </th>
                   </tr>
                 </thead>
+                
                 <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
                   {filteredStudents.map((student, id) => {
                     const formattedCreatedAt = getFormattedDate(student.createdAt);

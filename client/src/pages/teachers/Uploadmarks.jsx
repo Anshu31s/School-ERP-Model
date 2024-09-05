@@ -1,11 +1,192 @@
-import React from 'react'
+import GetStudents from "./students";
+import React, { useState } from "react";
+import axios from "axios";
 
 const Uploadmarks = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
+  const { students, loading, error } = GetStudents();
 
-export default Uploadmarks
+  const [selectedClass, setSelectedClass] = useState("");
+  const [selectedStream, setSelectedStream] = useState("");
+  const [selectedSubject, setSelectedSubject] = useState("");
+  const [marks, setMarks] = useState({});
+
+  const classes = ["9", "10", "11", "12"];
+  const streams = ["Science", "Commerce", "Arts"];
+  const subjects = {
+    "9": ["Math", "Science", "English"],
+    "10": ["Math", "Science", "English"],
+    "11": {
+      Science: ["Physics", "Chemistry", "Biology"],
+      Commerce: ["Accounting", "Business Studies", "Economics"],
+      Arts: ["History", "Political Science", "Geography"],
+    },
+    "12": {
+      Science: ["Physics", "Chemistry", "Biology"],
+      Commerce: ["Accounting", "Business Studies", "Economics"],
+      Arts: ["History", "Political Science", "Geography"],
+    },
+  };
+
+  const handleClassChange = (e) => {
+    setSelectedClass(e.target.value);
+    setSelectedStream("");
+    setSelectedSubject("");
+  };
+
+  const handleStreamChange = (e) => {
+    setSelectedStream(e.target.value);
+    setSelectedSubject("");
+  };
+
+  const handleSubjectChange = (e) => {
+    setSelectedSubject(e.target.value);
+  };
+
+  const handleMarksChange = (studentId, value) => {
+    setMarks((prevMarks) => ({
+      ...prevMarks,
+      [studentId]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!selectedClass) {
+      alert("Please select a class.");
+      return;
+    }
+    if ((selectedClass === "11" || selectedClass === "12") && !selectedStream) {
+      alert("Please select a stream.");
+      return;
+    }
+    if (!selectedSubject) {
+      alert("Please select a subject.");
+      return;
+    }
+
+    const payload = {
+      class: selectedClass,
+      subject: selectedSubject,
+      stream: selectedStream,
+      marks,
+    };
+
+    console.log("Submitting the following data:", payload);
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/protected/upload-marks", payload, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.status === 200) {
+        alert("Marks submitted successfully.");
+        setSelectedClass("");
+        setSelectedStream("");
+        setSelectedSubject("");
+        setMarks({});
+      } else {
+        alert("Failed to submit marks.");
+      }
+    } catch (error) {
+      console.error("Error submitting marks:", error);
+      alert("An error occurred while submitting marks.");
+    }
+  };
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label htmlFor="class">Class:</label>
+        <select id="class" value={selectedClass} onChange={handleClassChange}>
+          <option value="" disabled>
+            Select Class
+          </option>
+          {classes.map((cls) => (
+            <option key={cls} value={cls}>
+              {cls}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {(selectedClass === "11" || selectedClass === "12") && (
+        <div>
+          <label htmlFor="stream">Stream:</label>
+          <select id="stream" value={selectedStream} onChange={handleStreamChange}>
+            <option value="" disabled>
+              Select Stream
+            </option>
+            {streams.map((stream) => (
+              <option key={stream} value={stream}>
+                {stream}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {(selectedClass && ((selectedClass !== "11" && selectedClass !== "12") || selectedStream)) && (
+        <div>
+          <label htmlFor="subject">Subject:</label>
+          <select id="subject" value={selectedSubject} onChange={handleSubjectChange}>
+            <option value="" disabled>
+              Select Subject
+            </option>
+            {(selectedClass === "11" || selectedClass === "12") && selectedStream
+              ? subjects[selectedClass][selectedStream].map((subject) => (
+                <option key={subject} value={subject}>
+                  {subject}
+                </option>
+              ))
+              : subjects[selectedClass].map((subject) => (
+                <option key={subject} value={subject}>
+                  {subject}
+                </option>
+              ))}
+          </select>
+        </div>
+      )}
+
+      {selectedClass && (
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Marks</th>
+            </tr>
+          </thead>
+          <tbody>
+            {students
+              .filter((student) => student.current_class === selectedClass && student.active === true)
+              .map((student) => (
+                <tr key={student.userId}>
+                  <td>{student.userId}</td>
+                  <td>
+                    <input
+                      type="text"
+                      value={marks[student.userId] || ""}
+                      onChange={(e) => handleMarksChange(student.userId, e.target.value)}
+                    />
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      )}
+      <button type="submit">Submit</button>
+    </form>
+  );
+};
+
+export default Uploadmarks;

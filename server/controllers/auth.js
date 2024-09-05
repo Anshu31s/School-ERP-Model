@@ -1,5 +1,4 @@
 import bcrypt from 'bcryptjs';
-import fs from 'fs';
 import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 import User from '../models/user.js';
@@ -134,8 +133,6 @@ const login = async (req, res) => {
     token = jwt.sign(
       { id: user._id, userType: user.userType },
       process.env.JWT_SECRET,
-      console.log(process.env.JWT_SECRET),
-      { algorithm: 'RS384' }
     );
 
     res.cookie('token', token, cookieOptions);

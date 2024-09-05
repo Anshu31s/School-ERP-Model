@@ -1,25 +1,21 @@
 import mongoose from 'mongoose';
 
-const MarksSchema = new mongoose.Schema({
+const AttendanceSchema = new mongoose.Schema({
   class: {
     type: String,
     required: true,
     enum: ["9", "10", "11", "12"],
   },
-  subject: {
-    type: String,
-    required: true,
-  },
-  marks: {
-    type: Map, 
-    of: String,
-  },
   stream: {
     type: String,
     enum: ["Science", "Commerce", "Arts"],
   },
+  attendance: {
+    type: Map,
+    of: String,
+  },
 }, { timestamps: true });
 
+const Attendance = mongoose.model('Attendance', AttendanceSchema);
 
-const Marks = mongoose.model('Marks', MarksSchema);
-export default  Marks;
+export default Attendance;

@@ -1,33 +1,40 @@
-import Marks from '../models/marks.js';
-
+import Marks from '../models/marks.js'
 
 const uploadmarks = async (req, res) => {
+    const { class: className, subject, marks, stream } = req.body;
+   
+    if (!className || !subject || !marks) {
+        return res.status(400).json({ error: 'Class, subject, and marks are required.' });
+    }
+
+    if ((className === '11' || className === '12') && !stream) {
+        return res.status(400).json({ error: 'Stream is required for classes 11 and 12.' });
+    }
+
+    const validStreams = ["Science", "Commerce", "Arts"];
+    if (stream && !validStreams.includes(stream)) {
+        return res.status(400).json({ error: 'Invalid stream value.' });
+    }
+
     try {
-        const { grade, subject, session, students } = req.body;
-
-        if (!grade || !subject || !session || !students || !Array.isArray(students)) {
-            return res.status(400).json({ message: 'Invalid input' });
-        }
-
         const newMarks = new Marks({
-            grade,
+            class: className,
             subject,
-            session,
-            students
+            marks,
+            stream: stream || undefined,
         });
 
         await newMarks.save();
-
-        res.status(201).json({ message: 'Marks uploaded successfully', data: newMarks });
+        res.status(200).json({ message: 'Marks submitted successfully.' });
     } catch (error) {
-        console.error('Error uploading marks:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        console.error('Error saving marks:', error);
+        res.status(500).json({ error: 'Failed to submit marks.' });
     }
 };
 
 const getmarks = async (req, res) => {
-   
+
 }
 
-export { uploadmarks , getmarks };
+export { uploadmarks, getmarks };
 
