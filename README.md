@@ -18,8 +18,8 @@ Features
 
 Technologies Used
 
-- Frontend: [insert frontend technology, React]
-- Backend: [insert backend technology, Node.js]
+- Frontend: [insert frontend technology, React, Redux, Reduxpresist]
+- Backend: [insert backend technology, Node.js, express.js]
 - Database: [insert database technology, MongoDB]
 
 Getting Started

@@ -28,7 +28,12 @@ export const getUser = () => async (dispatch) => {
     const { user} = response.data;
     dispatch(setUser(user));
   } catch (error) {
-    console.error('Get user error:', error);
+    if (error.response && error.response.status === 401) {
+      console.log('User not authenticated, logging out.');
+      dispatch(logout());
+    } else {
+      console.error('Get user error:', error);
+    }
   }
 };
 

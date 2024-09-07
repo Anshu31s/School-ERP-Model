@@ -109,7 +109,7 @@ const registerTeacher = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  const { userId, password } = req.body;
+  const { userId, password, remember} = req.body;
   try {
     const user = await User.findOne({ userId });
 
@@ -129,6 +129,9 @@ const login = async (req, res) => {
       sameSite: 'strict',
     };
 
+    if (remember) {
+      cookieOptions.expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    }
 
     token = jwt.sign(
       { id: user._id, userType: user.userType },
