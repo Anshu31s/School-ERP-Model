@@ -1,4 +1,7 @@
 import React from 'react'
+import Attendance from './Attendace'
+import StudentGraph from './StudentGraph'
+import StudentGrowthChart from './StudentGrowthChart'
 
 const Home = () => {
   return (
@@ -30,7 +33,7 @@ const Home = () => {
             </svg>
             <p className="text-sm text-gray-500">Exam Results</p>
           </a>
-          
+
           <a className="rounded-lg border shadow-sm flex items-center justify-between p-4 bg-white">
             <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" width="40" height="40"
               viewBox="0 0 99.39 122.88">
@@ -54,6 +57,13 @@ const Home = () => {
           </a>
         </div>
       </div>
+      <div>
+        <StudentGraph />
+      </div>
+      <div>
+        <StudentGrowthChart />
+      </div>
+      < Attendance />
     </div>
   )
 }

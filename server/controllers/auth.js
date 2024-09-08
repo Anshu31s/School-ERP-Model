@@ -6,7 +6,6 @@ import Student from '../models/students.js';
 import Teacher from '../models/teachers.js';
 import transporter from '../mailer/email.js';
 import { currentSession } from '../datetime.js';
-import cron from 'node-cron';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -109,7 +108,7 @@ const registerTeacher = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  const { userId, password, remember} = req.body;
+  const { userId, password, remember } = req.body;
   try {
     const user = await User.findOne({ userId });
 
@@ -173,66 +172,6 @@ const getuser = async (req, res) => {
 };
 
 
-const getusers = async (req, res) => {
-  try {
-    const students = await Student.find().select('-password');
-
-    if (!students) {
-      return res.status(404).json({ message: 'No users found' });
-    }
-
-    res.status(200).json(students);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
-  }
-}
-
-
-
-const promoteStudents = async () => {
-  try {
-    const students = await Student.find({ score: { $gt: 40 } });
-
-    const classHierarchy = ['6', '7', '8', '9', '10', '11', '12'];
-
-    for (const student of students) {
-      const currentIndex = classHierarchy.indexOf(student.grade);
-
-      if (currentIndex < classHierarchy.length - 1) {
-        student.grade = classHierarchy[currentIndex + 1];
-        await student.save();
-      }
-    }
-
-    console.log('Student classes updated successfully');
-  } catch (error) {
-    console.error('Error updating student classes:', error);
-  }
-};
-
-
-async function updateSession() {
-  try {
-    await Student.updateMany({ active: true }, { session : currentSession });
-    console.log('Current session updated successfully for active students');
-  } catch (error) {
-    console.error('Error updating current session for active students:', error);
-  }
-}
-
-
-cron.schedule('0 0 1 4 *', async () => {
-  try {
-    await updateSession();
-    await promoteStudents();
-  } catch (error) {
-    console.error('Error executing scheduled task:', error);
-  }
-});
-console.log('Cron job scheduled successfully.');
-
-
 const deleteUser = async (req, res) => {
   const id = req.user.id;
   try {
@@ -256,12 +195,10 @@ const deleteUser = async (req, res) => {
   }
 };
 
-
-
 function logout(req, res) {
   res.clearCookie('_csrf');
   res.clearCookie('token');
   res.status(200).json({ message: 'Logged out successfully' });
 };
 
-export { registerStudent, registerTeacher, login, getuser, getusers, deleteUser, logout };
+export { registerStudent, registerTeacher, login, getuser, deleteUser, logout };

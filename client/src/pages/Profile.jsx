@@ -1,31 +1,13 @@
-import axios from 'axios';
-import React, { useState, useEffect } from 'react';
-
+import useProfile from './Getprofile';
 const Profile = () => {
-    const [profile, setProfile] = useState(null);
-    const [error, setError] = useState('');
-    useEffect(() => {
-        const fetchProfile = async () => {
-            try {
-                const response = await axios.get('http://localhost:5000/api/protected/getuser', {
-                    withCredentials: true,
-                });
-                const { student, teacher } = response.data;
-                setProfile(student || teacher);
-            } catch (error) {
-                console.error('Error fetching the user profile:', error);
-                setError('Failed to load user profile');
-            }
-        };
-        fetchProfile();
-    }, []);
-
+    const { profile, loading, error } = useProfile();
+    if (loading) {
+        return <div>Loading...</div>;
+    }
     if (error) {
         console.error('Error fetching the user profile:', error);
     }
-    if (!profile) {
-        return <div>Loading...</div>;
-    }
+    
     return (
         <div className="h-full p-8">
             <div className="bg-white rounded-lg shadow-xl pb-8">
