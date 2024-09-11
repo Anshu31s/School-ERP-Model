@@ -22,13 +22,5 @@ Technologies Used
 - Backend: [insert backend technology, Node.js, express.js]
 - Database: [insert database technology, MongoDB]
 
-Getting Started
-
-1. Clone the repository: `git clone (link unavailable)
-2. Install dependencies: npm install (or equivalent command for your technology stack)
-3. Run the application: npm start (or equivalent command)
 
 
-
-
-I hope this helps! Let me know if you'd like me to add anything else.
