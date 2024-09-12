@@ -1,4 +1,4 @@
-import GetStudents from "./students";
+import GetStudents from "../../data/students";
 import React, { useState } from "react";
 import axios from "axios";
 

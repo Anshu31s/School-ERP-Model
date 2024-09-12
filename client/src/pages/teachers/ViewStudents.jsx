@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getFormattedDate } from './Filterdatetime';
-import GetStudents from './students';
+import GetStudents from '../../data/students';
 
 const ViewStudents = () => {
   const [searchTerm, setSearchTerm] = useState('');

@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-d
 import Signin from "./components/Signin.jsx";
 import RegisterStudent from "./components/Register-students";
 import RegisterTeacher from "./components/Register-teachers";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./layout/Dashboard";
 import Home from "./pages/Home";
 import Schedule from "./pages/Schedule";
 import Attendance from "./pages/teachers/MarkAttendance.jsx";
