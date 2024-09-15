@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import { loginUser } from './auth/authActions';
 import useCsrfToken from './auth/csrf';
 
@@ -144,6 +145,14 @@ const SignIn = () => {
             </button>
           </div>
         </form>
+        <div className="mt-8">
+          <p className="text-center text-sm text-gray-600">
+            Don't have an account?
+            <Link to="/Register-student" className="text-blue-600 hover:underline" href="/register">
+              Sign up
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

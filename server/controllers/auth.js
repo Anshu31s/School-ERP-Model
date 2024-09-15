@@ -6,8 +6,7 @@ import Student from '../models/students.js';
 import Teacher from '../models/teachers.js';
 import transporter from '../mailer/email.js';
 import { currentSession } from '../datetime.js';
-import dotenv from 'dotenv';
-dotenv.config();
+
 
 const generateUserId = (prefix) => `${prefix}@${uuidv4().split('-')[0]}`;
 
@@ -91,7 +90,7 @@ const registerTeacher = async (req, res) => {
 
     await Promise.all([NewUser.save(), NewTeacher.save()]);
 
-    await sendRegistrationEmail(email, userId);
+    // await sendRegistrationEmail(email, userId);
 
     res.status(201).json({ success: true, message: 'Teacher registered successfully', userId });
   } catch (err) {

@@ -79,7 +79,7 @@ const UploadAttendance = () => {
     }
 
     return (
-        <div className="p-8">
+        <div>
             <form onSubmit={handleSubmit}>
                 <div className="flex flex-1">
                     <div>

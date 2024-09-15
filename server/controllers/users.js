@@ -1,6 +1,7 @@
 import User from '../models/user.js';
 import Student from '../models/students.js';
 import Teacher from '../models/teachers.js';
+import { get } from 'mongoose';
 
 const getstudents = async (req, res) => {
     try {
@@ -51,5 +52,26 @@ const getstudents = async (req, res) => {
     }
   };
   
+  const getTeachers = async (req, res) => {
+    try {
+      const totalTeachers = await Teacher.countDocuments();
+      const activeTeachers = await Teacher.countDocuments({ active: true });
+      
+      const teachers = await Teacher.find().select('-password');
+  
+      if (!teachers || teachers.length === 0) {
+        return res.status(404).json({ message: 'No users found' });
+      }
+  
+      res.status(200).json({
+        totalTeachers,  
+        activeTeachers,
+        teachers
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  };
 
-export { getstudents,getNewStudents };
+export { getstudents,getNewStudents, getTeachers };

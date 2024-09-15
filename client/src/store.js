@@ -7,7 +7,6 @@ import { encryptTransform } from 'redux-persist-transform-encrypt';
 const persistConfig = {
   key: 'auth',
   storage,
-  blacklist: ['user'],
   transforms: [
     encryptTransform({
       secretKey: '3x@mpl3S3crK3y123!',

@@ -9,13 +9,13 @@ const MyBigCalendar = () => {
   const [events, setEvents] = useState([]);
 
   return (
-    <div>
+    <div className='bg-white'>
       <BigCalendar
         localizer={localizer}
         events={events}
         startAccessor="start"
         endAccessor="end"
-        className='h-screen p-2'
+        className='md:h-screen h-[25rem] p-2'
       />
     </div>
   );

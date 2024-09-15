@@ -1,25 +1,42 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
 import axios from 'axios';
 import useCsrfToken from './auth/csrf';
+import { teacherSchema } from './teacherSchema';
+
+const formFields = [
+  { label: 'Name', name: 'name', type: 'text', required: true },
+  { label: 'Email', name: 'email', type: 'email', required: true },
+  { label: 'Date of Birth', name: 'dob', type: 'date', required: true },
+  {
+    label: 'Gender',
+    name: 'gender',
+    type: 'select',
+    options: ['male', 'female', 'other'],
+    required: true
+  },
+  {
+    label: 'Blood Group',
+    name: 'blood',
+    type: 'select',
+    options: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+    required: true
+  },
+  { label: 'Mobile', name: 'mobile', type: 'text', required: true },
+  { label: 'Father\'s Name', name: 'father_name', type: 'text', required: true },
+  { label: 'Mother\'s Name', name: 'mother_name', type: 'text', required: true },
+  { label: 'Father\'s Mobile', name: 'father_mobile', type: 'text', required: true },
+  { label: 'Mother\'s Mobile', name: 'mother_mobile', type: 'text', required: true },
+  { label: 'Current Address', name: 'current_address', type: 'textarea', required: true },
+];
 
 const RegisterTeacher = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    dob: '',
-    gender: '',
-    blood: '',
-    mobile: '',
-    father_name: '',
-    mother_name: '',
-    father_mobile: '',
-    mother_mobile: '',
-    current_address: '',
-  });
   const csrfToken = useCsrfToken();
-  const Navigate = useNavigate();
-  const [errors, setErrors] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [formData, setFormData] = useState(() =>
+    formFields.reduce((acc, field) => ({ ...acc, [field.name]: '' }), {})
+  );
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,7 +48,20 @@ const RegisterTeacher = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrors([]);
+    setErrors({});
+    setIsSubmitting(true);
+
+    // Validate form data
+    const validationResult = teacherSchema.safeParse(formData);
+    if (!validationResult.success) {
+      const fieldErrors = validationResult.error.errors.reduce((acc, err) => {
+        acc[err.path[0]] = err.message;
+        return acc;
+      }, {});
+      setErrors(fieldErrors);
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
       const response = await axios.post('http://localhost:5000/api/auth/register-teacher', formData, {
@@ -41,169 +71,94 @@ const RegisterTeacher = () => {
         withCredentials: true,
       });
 
-      const { success, message ,userId} = response.data;
+      const { success, message } = response.data;
       if (success) {
-        Navigate('/login');
-        console.log('message', message);
+        alert(message);
+
+        setFormData(() =>
+          formFields.reduce((acc, field) => ({ ...acc, [field.name]: '' }), {})
+        );
       }
     } catch (error) {
       if (error.response && error.response.status === 400) {
         setErrors(error.response.data.error);
       } else {
-        setErrors(['Server error. Please try again later.']);
+        setErrors({ form: ['Server error. Please try again later.'] });
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <div className="container mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-4">Register Student</h2>
-      {errors.length > 0 && (
+      <h2 className="text-2xl font-bold mb-4">Register Teacher</h2>
+
+      {/* General form errors */}
+      {errors.form && (
         <div className="text-red-500 mb-4">
-          {errors.map((err, index) => (
+          {errors.form.map((err, index) => (
             <p key={index}>{err}</p>
           ))}
         </div>
       )}
+
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label>Name</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className="border p-2 w-full"
-            required
-          />
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {formFields.map((field) => (
+            <div key={field.name}>
+              <label htmlFor={field.name}>{field.label}</label>
+              {field.type === 'select' ? (
+                <select
+                  id={field.name}
+                  name={field.name}
+                  value={formData[field.name]}
+                  onChange={handleChange}
+                  className={`border p-2 w-full ${errors[field.name] ? 'border-red-500' : ''}`}
+                >
+                  <option value="">Select {field.label}</option>
+                  {field.options.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              ) : field.type === 'textarea' ? (
+                <textarea
+                  id={field.name}
+                  name={field.name}
+                  value={formData[field.name]}
+                  onChange={handleChange}
+                  placeholder={field.placeholder}
+                  className={`border p-2 w-full ${errors[field.name] ? 'border-red-500' : ''}`}
+                />
+              ) : (
+                <input
+                  id={field.name}
+                  type={field.type}
+                  name={field.name}
+                  value={formData[field.name]}
+                  onChange={handleChange}
+                  placeholder={field.placeholder}
+                  className={`border p-2 w-full ${errors[field.name] ? 'border-red-500' : ''}`}
+                />
+              )}
+
+              {/* Display field-specific errors */}
+              {errors[field.name] && <p className="text-red-500 mt-1">{errors[field.name]}</p>}
+            </div>
+          ))}
         </div>
-        <div>
-          <label>Email</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            className="border p-2 w-full"
-            required
-          />
-        </div>
-        <div>
-          <label>Date of Birth</label>
-          <input
-            type="date"
-            name="dob"
-            value={formData.dob}
-            onChange={handleChange}
-            className="border p-2 w-full"
-            required
-          />
-        </div>
-        <div>
-          <label>Gender</label>
-          <select
-            name="gender"
-            value={formData.gender}
-            onChange={handleChange}
-            className="border p-2 w-full"
-            required
-          >
-            <option value="">Select Gender</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-        <div>
-          <label>Blood Group</label>
-          <select
-            name="blood"
-            value={formData.blood}
-            onChange={handleChange}
-            className="border p-2 w-full"
-            required
-          >
-            <option value="">Select Blood Group</option>
-            <option value="A+">A+</option>
-            <option value="A-">A-</option>
-            <option value="B+">B+</option>
-            <option value="B-">B-</option>
-            <option value="AB+">AB+</option>
-            <option value="AB-">AB-</option>
-            <option value="O+">O+</option>
-            <option value="O-">O-</option>
-          </select>
-        </div>
-        <div>
-          <label>Mobile</label>
-          <input
-            type="text"
-            name="mobile"
-            value={formData.mobile}
-            onChange={handleChange}
-            className="border p-2 w-full"
-            required
-          />
-        </div>
-        <div>
-          <label>Father's Name</label>
-          <input
-            type="text"
-            name="father_name"
-            value={formData.father_name}
-            onChange={handleChange}
-            className="border p-2 w-full"
-            required
-          />
-        </div>
-        <div>
-          <label>Mother's Name</label>
-          <input
-            type="text"
-            name="mother_name"
-            value={formData.mother_name}
-            onChange={handleChange}
-            className="border p-2 w-full"
-            required
-          />
-        </div>
-        <div>
-          <label>Father's Mobile</label>
-          <input
-            type="text"
-            name="father_mobile"
-            value={formData.father_mobile}
-            onChange={handleChange}
-            className="border p-2 w-full"
-            required
-          />
-        </div>
-        <div>
-          <label>Mother's Mobile</label>
-          <input
-            type="text"
-            name="mother_mobile"
-            value={formData.mother_mobile}
-            onChange={handleChange}
-            className="border p-2 w-full"
-            required
-          />
-        </div>
-        <div>
-          <label>Current Address</label>
-          <textarea
-            name="current_address"
-            value={formData.current_address}
-            onChange={handleChange}
-            className="border p-2 w-full"
-            required
-          ></textarea>
-        </div>
-        <button type="submit" className="bg-blue-500 text-white p-2 rounded">
-          Register
+        <button
+          type="submit"
+          className={`bg-blue-500 text-white p-2 rounded ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? 'Submitting...' : 'Register'}
         </button>
       </form>
     </div>
   );
 };
-export default RegisterTeacher
+
+export default RegisterTeacher;

@@ -16,7 +16,7 @@ const UserSchema = new mongoose.Schema({
   },
   active: {
     type: Boolean,
-    default: false,
+    default: true,
   },
 }, { timestamps: true });
 

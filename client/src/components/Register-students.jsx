@@ -1,25 +1,32 @@
-import React, {useState } from 'react';
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import useCsrfToken from './auth/csrf';
+import { studentSchema } from './studentSchema';
 
 const RegisterStudent = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    dob: '',
-    gender: '',
-    blood: '',
-    mobile: '',
-    father_name: '',
-    mother_name: '',
-    father_mobile: '',
-    mother_mobile: '',
-    current_address: '',
-  });
   const csrfToken = useCsrfToken();
-  const Navigate = useNavigate();
-  const [errors, setErrors] = useState([]);
+  const navigate = useNavigate();
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const formFields = [
+    { name: 'name', label: 'Name', type: 'text', placeholder: 'Enter name' },
+    { name: 'email', label: 'Email', type: 'email', placeholder: 'Enter email' },
+    { name: 'dob', label: 'Date of Birth', type: 'date' },
+    { name: 'gender', label: 'Gender', type: 'select', options: ['male', 'female', 'other'] },
+    { name: 'blood', label: 'Blood Group', type: 'select', options: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] },
+    { name: 'mobile', label: 'Mobile', type: 'number', placeholder: 'Enter mobile number' },
+    { name: 'father_name', label: 'Father\'s Name', type: 'text', placeholder: 'Enter father\'s name' },
+    { name: 'mother_name', label: 'Mother\'s Name', type: 'text', placeholder: 'Enter mother\'s name' },
+    { name: 'father_mobile', label: 'Father\'s Mobile', type: 'number', placeholder: 'Enter father\'s mobile' },
+    { name: 'mother_mobile', label: 'Mother\'s Mobile', type: 'number', placeholder: 'Enter mother\'s mobile' },
+    { name: 'current_address', label: 'Current Address', type: 'textarea', placeholder: 'Enter current address' },
+  ];
+
+  const [formData, setFormData] = useState(
+    formFields.reduce((acc, field) => ({ ...acc, [field.name]: '' }), {})
+  );
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,178 +36,157 @@ const RegisterStudent = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setErrors([]);
-
+  const handlePayment = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/register-student', formData, {
-        headers: {
-          'CSRF-Token': csrfToken,
-        },
-        withCredentials: true,
+      const paymentResponse = await axios.post('http://localhost:5000/api/payment/create-order', {
+        amount: 500,
       });
 
-      const { success, message ,userId} = response.data;
-      if (success) {
-        Navigate('/');
-        console.log('message', message);
-      }
+      const options = {
+        key: 'rzp_test_p3VY80Mx9dIilM',
+        amount: 50000,
+        currency: 'INR',
+        name: 'Your Company Name',
+        description: 'Account Creation Fee',
+        order_id: paymentResponse.data.order.id,
+        callback_url: 'http://localhost:3000/api/payment/verify-payment',
+
+        handler: async (response) => {
+          const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = response;
+
+          try {
+            // Send form data to backend
+            await axios.post('http://localhost:5000/api/auth/register-student', {
+              ...formData,
+            }, {
+              headers: {
+                'CSRF-Token': csrfToken,
+              },
+              withCredentials: true,
+            });
+
+            // Send payment details to backend
+            await axios.post('http://localhost:5000/api/payment/register-payment', {
+              paymentId: razorpay_payment_id,
+              orderId: razorpay_order_id,
+              signature: razorpay_signature,
+              name: formData.name,
+              email: formData.email,
+              mobile: formData.mobile
+            });
+
+            alert('Registration successful!');
+            navigate('/');
+            setFormData(formFields.reduce((acc, field) => ({ ...acc, [field.name]: '' }), {}));
+          } catch (error) {
+            console.error('Error saving form data or payment details:', error);
+            alert('Registration failed. Please try again.');
+          }
+        },
+        prefill: {
+          name: formData.name,
+          email: formData.email,
+          contact: formData.mobile,
+        },
+        theme: {
+          color: '#3399cc',
+        },
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
     } catch (error) {
-      if (error.response && error.response.status === 400) {
-        setErrors(error.response.data.error);
-      } else {
-        setErrors(['Server error. Please try again later.']);
-      }
+      console.error('Error processing payment:', error);
+      alert('Payment failed. Please try again.');
     }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrors({});
+    setIsSubmitting(true);
+
+    const validationResult = studentSchema.safeParse(formData);
+    if (!validationResult.success) {
+      const fieldErrors = validationResult.error.errors.reduce((acc, err) => {
+        acc[err.path[0]] = err.message;
+        return acc;
+      }, {});
+      setErrors(fieldErrors);
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Trigger payment process
+    handlePayment();
   };
 
   return (
     <div className="container mx-auto p-4">
       <h2 className="text-2xl font-bold mb-4">Register Student</h2>
-      {errors.length > 0 && (
+
+      {/* General form errors */}
+      {errors.form && (
         <div className="text-red-500 mb-4">
-          {errors.map((err, index) => (
+          {errors.form.map((err, index) => (
             <p key={index}>{err}</p>
           ))}
         </div>
       )}
+
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label>Name</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className="border p-2 w-full"
-            required
-          />
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {formFields.map((field) => (
+            <div key={field.name}>
+              <label htmlFor={field.name}>{field.label}</label>
+              {field.type === 'select' ? (
+                <select
+                  id={field.name}
+                  name={field.name}
+                  value={formData[field.name]}
+                  onChange={handleChange}
+                  className={`border p-2 w-full ${errors[field.name] ? 'border-red-500' : ''}`}
+                >
+                  <option value="">Select {field.label}</option>
+                  {field.options.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              ) : field.type === 'textarea' ? (
+                <textarea
+                  id={field.name}
+                  name={field.name}
+                  value={formData[field.name]}
+                  onChange={handleChange}
+                  placeholder={field.placeholder}
+                  className={`border p-2 w-full ${errors[field.name] ? 'border-red-500' : ''}`}
+                />
+              ) : (
+                <input
+                  id={field.name}
+                  type={field.type}
+                  name={field.name}
+                  value={formData[field.name]}
+                  onChange={handleChange}
+                  placeholder={field.placeholder}
+                  className={`border p-2 w-full ${errors[field.name] ? 'border-red-500' : ''}`}
+                />
+              )}
+
+              {/* Display field-specific errors */}
+              {errors[field.name] && <p className="text-red-500 mt-1">{errors[field.name]}</p>}
+            </div>
+          ))}
+
         </div>
-        <div>
-          <label>Email</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            className="border p-2 w-full"
-            required
-          />
-        </div>
-        <div>
-          <label>Date of Birth</label>
-          <input
-            type="date"
-            name="dob"
-            value={formData.dob}
-            onChange={handleChange}
-            className="border p-2 w-full"
-            required
-          />
-        </div>
-        <div>
-          <label>Gender</label>
-          <select
-            name="gender"
-            value={formData.gender}
-            onChange={handleChange}
-            className="border p-2 w-full"
-            required
-          >
-            <option value="">Select Gender</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-        <div>
-          <label>Blood Group</label>
-          <select
-            name="blood"
-            value={formData.blood}
-            onChange={handleChange}
-            className="border p-2 w-full"
-            required
-          >
-            <option value="">Select Blood Group</option>
-            <option value="A+">A+</option>
-            <option value="A-">A-</option>
-            <option value="B+">B+</option>
-            <option value="B-">B-</option>
-            <option value="AB+">AB+</option>
-            <option value="AB-">AB-</option>
-            <option value="O+">O+</option>
-            <option value="O-">O-</option>
-          </select>
-        </div>
-        <div>
-          <label>Mobile</label>
-          <input
-            type="text"
-            name="mobile"
-            value={formData.mobile}
-            onChange={handleChange}
-            className="border p-2 w-full"
-            required
-          />
-        </div>
-        <div>
-          <label>Father's Name</label>
-          <input
-            type="text"
-            name="father_name"
-            value={formData.father_name}
-            onChange={handleChange}
-            className="border p-2 w-full"
-            required
-          />
-        </div>
-        <div>
-          <label>Mother's Name</label>
-          <input
-            type="text"
-            name="mother_name"
-            value={formData.mother_name}
-            onChange={handleChange}
-            className="border p-2 w-full"
-            required
-          />
-        </div>
-        <div>
-          <label>Father's Mobile</label>
-          <input
-            type="text"
-            name="father_mobile"
-            value={formData.father_mobile}
-            onChange={handleChange}
-            className="border p-2 w-full"
-            required
-          />
-        </div>
-        <div>
-          <label>Mother's Mobile</label>
-          <input
-            type="text"
-            name="mother_mobile"
-            value={formData.mother_mobile}
-            onChange={handleChange}
-            className="border p-2 w-full"
-            required
-          />
-        </div>
-        <div>
-          <label>Current Address</label>
-          <textarea
-            name="current_address"
-            value={formData.current_address}
-            onChange={handleChange}
-            className="border p-2 w-full"
-            required
-          ></textarea>
-        </div>
-        <button type="submit" className="bg-blue-500 text-white p-2 rounded">
-          Register
+        <button
+          type="submit"
+          className={`bg-blue-500 text-white p-2 rounded ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? 'Submitting...' : 'Register'}
         </button>
       </form>
     </div>

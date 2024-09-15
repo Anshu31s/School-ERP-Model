@@ -21,10 +21,6 @@ const TeacherSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Password is required'],
   },
-  userType: {
-    type: String,
-    required: [true, 'Role is required'],
-  },
   dob: {
     type: Date,
     required: [true, 'Date of Birth is required'],
@@ -73,12 +69,10 @@ const TeacherSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Current address is required'],
   },
-  
-  attendance: [{
-    date: { type: Date, default: Date.now },
-    status: { type: String, enum: ['Present', 'Absent'], required: true }
-  }]
-
+  active: {
+    type: Boolean,
+    default: true,
+  },
 }, { timestamps: true });
 
 const Teacher = mongoose.model('Teacher', TeacherSchema);

@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import protectedRoutes from './routes/protectedRoutes.js';
 import authRoute from './routes/authroutes.js';
 import authMiddleware from './middleware/auth.js';
+import paymentRoute from './routes/paymentRoute.js';
 import csurf from 'csurf';
 
 dotenv.config();
@@ -45,6 +46,7 @@ app.get('/', authMiddleware, (req, res) => {
     res.send('Welcome to the server!');
 });
 
+app.use('/api/payment', paymentRoute);
 app.use('/api/auth', authRoute);
 app.use('/api/protected', protectedRoutes);
 
