@@ -54,7 +54,7 @@ const registerStudent = async (req, res) => {
 
     await Promise.all([NewUser.save(), NewStudent.save()]);
 
-    // await sendRegistrationEmail(email, userId);
+    await sendRegistrationEmail(email, userId);
 
     res.status(201).json({ success: true, message: 'Student registered successfully', userId });
   } catch (err) {
@@ -90,7 +90,7 @@ const registerTeacher = async (req, res) => {
 
     await Promise.all([NewUser.save(), NewTeacher.save()]);
 
-    // await sendRegistrationEmail(email, userId);
+    await sendRegistrationEmail(email, userId);
 
     res.status(201).json({ success: true, message: 'Teacher registered successfully', userId });
   } catch (err) {

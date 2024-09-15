@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-
+import { useSelector } from 'react-redux';
 const navItems = [
   {
     to: '/dashboard/home',
@@ -39,6 +39,18 @@ const navItems = [
 ];
 
 const Sidebar = ({ showSidebar }) => {
+  const userRole = useSelector((state) => state.auth.user?.userType);
+
+  const NavItems = navItems.filter((_, index) => {
+    if (userRole === 'student') {
+      return index < 2;
+    } else if (userRole === 'teacher') {
+      return index < 4; 
+    } else {
+      return true; 
+    }
+  });
+
   if (!showSidebar) {
     return null;
   }
@@ -47,7 +59,7 @@ const Sidebar = ({ showSidebar }) => {
       <div className="flex z-10 fixed top-0 left-0 sm:z-10 flex-col mt-10 md:mt-0 md:w-[19%] h-screen px-5 py-8 overflow-y-auto bg-white dark:bg-gray-900 dark:border-gray-700 shadow-lg shadow-gray-500">
         <div className="flex flex-col justify-between flex-1">
           <nav className="-mx-3 space-y-3">
-            {navItems.map((item) => (
+            {NavItems.map((item) => (
               <Link
                 key={item.to}
                 className="flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-300 hover:bg-gray-900 dark:hover:bg-gray-400 dark:hover:text-gray-200 hover:text-gray-700"

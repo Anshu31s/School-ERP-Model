@@ -21,6 +21,7 @@ const uploadmarks = async (req, res) => {
             class: className,
             subject,
             marks,
+            examType,
             stream: stream || undefined,
         });
 

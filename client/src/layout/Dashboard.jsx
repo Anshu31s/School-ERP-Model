@@ -20,9 +20,9 @@ const Dashboard = () => {
     return (
         <div>
              <Sidebar showSidebar={showSidebar} />
-            <main className='w-full md:w-[81%] bg-gray-100 md:float-right '>
+            <main className='w-full h-screen md:w-[81%] bg-gray-50 md:float-right '>
                 <Header toggleSidebar={toggleSidebar}/>
-                <div className='mt-14 md:mt-10 p-4 md:p-8'>
+                <div className='mt-14 md:mt-10 pt-4 md:pt-8 px-2'>
                     <Outlet />
                 </div>
             </main>

@@ -14,6 +14,11 @@ const MarksSchema = new mongoose.Schema({
     type: Map, 
     of: String,
   },
+  examType: {
+    type: String,
+    required: true,
+    enum: ["Half Yearly", "Final"],
+  },
   stream: {
     type: String,
     enum: ["Science", "Commerce", "Arts"],
