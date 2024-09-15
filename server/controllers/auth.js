@@ -135,9 +135,9 @@ const login = async (req, res) => {
       { id: user._id, userType: user.userType },
       process.env.JWT_SECRET,
     );
-
+    const userType = user.userType;
     res.cookie('token', token, cookieOptions);
-    res.status(200).json({ success: true, message: 'Login successful' });
+    res.status(200).json({ success: true, userType, message: 'Login successful' });
 
   } catch (err) {
     console.error(err);

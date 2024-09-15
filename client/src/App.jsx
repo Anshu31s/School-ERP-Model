@@ -14,11 +14,13 @@ import UnauthRoute from "./routes/UnauthRoute.jsx";
 import AdminRoute from "./routes/AdminRoute.jsx";
 import TeacherRoute from "./routes/teacherRoute.jsx";
 import ViewTeacher from "./pages/ViewTeachers.jsx";
+import Sendemail from "./components/Send-email.jsx";
 function App() {
   return (
 
     <Router>
       <Routes>
+      <Route path="/send-email" element={<Sendemail />} />
         <Route element={<UnauthRoute />} >
           <Route path="/" element={<Signin />} />
           <Route path="/register-student" element={<RegisterStudent />} />

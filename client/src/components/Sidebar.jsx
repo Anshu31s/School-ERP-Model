@@ -46,7 +46,7 @@ const Sidebar = ({ showSidebar }) => {
       return index < 2;
     } else if (userRole === 'teacher') {
       return index < 4; 
-    } else {
+    } else if (userRole === 'admin') {
       return true; 
     }
   });

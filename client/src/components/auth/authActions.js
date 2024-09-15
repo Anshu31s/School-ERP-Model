@@ -10,9 +10,10 @@ export const loginUser = (formData, csrfToken) => async (dispatch) => {
       },
       withCredentials: true,
     });
-    const { success} = response.data;
+    const { success, userType } = response.data;
     if (success) {
       dispatch(loginSuccess());
+      dispatch(setUser(userType));
     } else {
       dispatch(loginFailure('Invalid User ID or Password'));
     }
