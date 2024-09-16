@@ -132,7 +132,7 @@ const SignIn = () => {
                 Remember me
               </label>
             </div>
-            <Link to="/send-email" className="text-center text-sm font-medium text-gray-600 hover:underline" >
+            <Link to="/forget-password" className="text-center text-sm font-medium text-gray-600 hover:underline" >
               Forgot your password?
             </Link>
           </div>

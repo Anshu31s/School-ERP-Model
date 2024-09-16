@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import Signin from "./components/Signin.jsx";
 import RegisterStudent from "./components/Register-students";
 import RegisterTeacher from "./components/Register-teachers";
@@ -14,26 +19,27 @@ import UnauthRoute from "./routes/UnauthRoute.jsx";
 import AdminRoute from "./routes/AdminRoute.jsx";
 import TeacherRoute from "./routes/teacherRoute.jsx";
 import ViewTeacher from "./pages/ViewTeachers.jsx";
-import Sendemail from "./components/Send-email.jsx";
+import Forgetpassword from "./components/Forget-password.jsx";
+import ResetPassword from "./components/ResetPassword.jsx";
 function App() {
   return (
-
     <Router>
       <Routes>
-      <Route path="/send-email" element={<Sendemail />} />
-        <Route element={<UnauthRoute />} >
+        <Route path="/forget-password" element={<Forgetpassword />} />
+        <Route path="/reset-Password/:token" element={<ResetPassword />} />
+        <Route element={<UnauthRoute />}>
           <Route path="/" element={<Signin />} />
           <Route path="/register-student" element={<RegisterStudent />} />
         </Route>
-        <Route element={<AuthRoute />} >
+        <Route element={<AuthRoute />}>
           <Route path="/dashboard" element={<Dashboard />}>
             <Route path="home" element={<Home />} />
             <Route path="schedule" element={<Schedule />} />
-            <Route element={<TeacherRoute />} >
+            <Route element={<TeacherRoute />}>
               <Route path="attendance" element={<Attendance />} />
               <Route path="Upload-marks" element={<Uploadmarks />} />
             </Route>
-            <Route element={<AdminRoute />} >
+            <Route element={<AdminRoute />}>
               <Route path="register-teacher" element={<RegisterTeacher />} />
               <Route path="Students" element={<ViewStudents />} />
               <Route path="Teachers" element={<ViewTeacher />} />
@@ -44,8 +50,7 @@ function App() {
         </Route>
       </Routes>
     </Router>
-
   );
 }
 
-export default App
+export default App;
