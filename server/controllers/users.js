@@ -1,7 +1,6 @@
 import User from '../models/user.js';
 import Student from '../models/students.js';
 import Teacher from '../models/teachers.js';
-import { get } from 'mongoose';
 
 const getstudents = async (req, res) => {
     try {

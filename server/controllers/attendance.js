@@ -35,14 +35,14 @@ const uploadattendance = async (req, res) => {
 
 const getAttendance = async (req, res) => {
   try {
-    const { userId, class: currentClass } = req.query;
+    const { userId, class: Class } = req.query;
 
     const startOfApril = moment().month(3).startOf('month').toDate();
     const endOfFebNextYear = moment().year(moment().year() + 1).month(1).endOf('month').toDate();
 
 
     const attendanceRecords = await Attendance.find({
-      class: currentClass,
+      class: Class,
       createdAt: {
         $gte: startOfApril,
         $lte: endOfFebNextYear,

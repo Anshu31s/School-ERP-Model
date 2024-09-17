@@ -32,7 +32,7 @@ const Header = ({ toggleSidebar }) => {
 
     return (
         <>
-            <header className="w-full top-0 md:w-[81%] fixed z-10 bg-gray-900 flex justify-between md:justify-end items-center p-2 px-4">
+            <header className="w-full top-0 md:w-[85%] fixed z-10 bg-gray-900 flex justify-between md:justify-end items-center p-2 px-4">
                 <button onClick={ toggleSidebar } className='text-white block md:hidden'>
                     <svg xmlns="http://www.w3.org/2000/svg" width="40px" height="40px" viewBox="0 0.5 24 24" fill="currentcolor">
                         <path d="M5.5 7.75C5.08579 7.75 4.75 8.08579 4.75 8.5C4.75 8.91421 5.08579 9.25 5.5 9.25V7.75ZM19.5 9.25C19.9142 9.25 20.25 8.91421 20.25 8.5C20.25 8.08579 19.9142 7.75 19.5 7.75V9.25ZM5.5 11.75C5.08579 11.75 4.75 12.0858 4.75 12.5C4.75 12.9142 5.08579 13.25 5.5 13.25V11.75ZM17.5 13.25C17.9142 13.25 18.25 12.9142 18.25 12.5C18.25 12.0858 17.9142 11.75 17.5 11.75V13.25ZM5.5 15.75C5.08579 15.75 4.75 16.0858 4.75 16.5C4.75 16.9142 5.08579 17.25 5.5 17.25V15.75ZM12.5 17.25C12.9142 17.25 13.25 16.9142 13.25 16.5C13.25 16.0858 12.9142 15.75 12.5 15.75V17.25ZM5.5 9.25H19.5V7.75H5.5V9.25ZM5.5 13.25H17.5V11.75H5.5V13.25ZM5.5 17.25H12.5V15.75H5.5V17.25Z" />
@@ -54,7 +54,7 @@ const Header = ({ toggleSidebar }) => {
                         </span>
                     </div>
 
-                    <div className="flex items-center md:space-x-4 space-x-1">
+                    <div className="flex items-center md:space-x-4 space-x-2">
                         <div className="md:block hidden">
                             <p className="text-sm font-medium text-gray-600 dark:text-gray-300">{user.userId}</p>
                             <p className="text-xs text-gray-600 dark:text-gray-300">{user.userType}</p>

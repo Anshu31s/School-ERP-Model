@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { getFormattedDate } from './Filterdatetime';
-import GetTeachers from '../data/teachers';
+import React, { useState } from "react";
+import { getFormattedDate } from "./Filterdatetime";
+import GetTeachers from "../data/teachers";
 
 const ViewTeachers = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [genderFilter, setGenderFilter] = useState('All');
-  const [statusFilter, setStatusFilter] = useState('All');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [genderFilter, setGenderFilter] = useState("All");
+  const [statusFilter, setStatusFilter] = useState("All");
 
   const { teachers, loading, error } = GetTeachers();
 
@@ -17,10 +17,13 @@ const ViewTeachers = () => {
       teacher.userId.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesGenderFilter =
-      genderFilter === 'All' || teacher.gender.toLowerCase() === genderFilter.toLowerCase();
+      genderFilter === "All" ||
+      teacher.gender.toLowerCase() === genderFilter.toLowerCase();
 
     const matchesStatusFilter =
-      statusFilter === 'All' || (statusFilter === 'true' && teacher.active) || (statusFilter === 'false' && !teacher.active);
+      statusFilter === "All" ||
+      (statusFilter === "true" && teacher.active) ||
+      (statusFilter === "false" && !teacher.active);
 
     return matchesSearchTerm && matchesGenderFilter && matchesStatusFilter;
   });
@@ -44,7 +47,7 @@ const ViewTeachers = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="px-2 md:px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <div className='flex flex-row justify-between'>
+          <div className="flex flex-row justify-between">
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
@@ -96,9 +99,6 @@ const ViewTeachers = () => {
                     Phone
                   </th>
                   <th className="px-3 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                    Department
-                  </th>
-                  <th className="px-3 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     Date of Birth
                   </th>
                   <th className="relative py-3.5 px-4">
@@ -109,52 +109,65 @@ const ViewTeachers = () => {
 
               <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
                 {filteredTeachers.map((teacher, id) => {
-                  const formattedCreatedAt = getFormattedDate(teacher.createdAt);
-                  const formattedUpdatedAt = getFormattedDate(teacher.updatedAt);
+                  const formattedCreatedAt = getFormattedDate(
+                    teacher.createdAt
+                  );
+                  const formattedUpdatedAt = getFormattedDate(
+                    teacher.updatedAt
+                  );
                   const formattedDOB = getFormattedDate(teacher.dob);
                   return (
                     <tr key={id} className="block md:table-row">
                       {/* Mobile view stacking */}
-                      <td className="px-4 py-4 text-sm font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap block md:table-cell">
+                      <td className="px-4 py-4 text-xs font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap block md:table-cell">
                         <span className="md:hidden font-bold">ID: </span>
                         {teacher.userId}
                       </td>
-                      <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap block md:table-cell">
-                        <span className="md:hidden font-bold">Created At: </span>
+                      <td className="px-4 py-4 text-xs text-gray-500 dark:text-gray-300 whitespace-nowrap block md:table-cell">
+                        <span className="md:hidden font-bold">
+                          Created At:{" "}
+                        </span>
                         {formattedCreatedAt}
                       </td>
-                      <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap block md:table-cell">
-                        <span className="md:hidden font-bold">Updated At: </span>
+                      <td className="px-4 py-4 text-xs text-gray-500 dark:text-gray-300 whitespace-nowrap block md:table-cell">
+                        <span className="md:hidden font-bold">
+                          Updated At:{" "}
+                        </span>
                         {formattedUpdatedAt}
                       </td>
-                      <td className="px-4 py-4 text-sm font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap block md:table-cell">
+                      <td className="px-4 py-4 text-xs font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap block md:table-cell">
                         <span className="md:hidden font-bold">Status: </span>
                         <div
-                          className={`inline-flex items-center rounded-full gap-x-2 ${teacher.active ? 'bg-emerald-100/60 dark:bg-gray-800' : 'bg-red-100/60 dark:bg-gray-800'
-                            }`}
+                          className={`inline-flex items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-gray-800 ${
+                            teacher.active ? "bg-emerald-500" : "bg-red-500"
+                          }`}
                         >
                           <span
-                            className={`h-1.5 w-1.5 rounded-full ${teacher.active ? 'bg-emerald-500' : 'bg-red-500'
-                              }`}
-                          ></span>
-                          <h2
-                            className={`text-sm font-normal ${teacher.active ? 'text-emerald-500' : 'text-red-500'
-                              }`}
+                            className={`h-1.5 w-1.5 rounded-full ${
+                              teacher.active ? "bg-emerald-500" : "bg-red-500"
+                            }`}
+                          />
+                          <span
+                            className={`text-sm font-normal ${
+                              teacher.active
+                                ? "text-emerald-100"
+                                : "text-red-100"
+                            }`}
                           >
-                            {teacher.active ? 'Active' : 'Inactive'}
-                          </h2>
+                            {teacher.active ? "Active" : "Inactive"}
+                          </span>
                         </div>
                       </td>
 
-                      <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap block md:table-cell">
+                      <td className="px-4 py-4 text-xs text-gray-500 dark:text-gray-300 whitespace-nowrap block md:table-cell">
                         <button className="flex items-center gap-x-2">
                           <img
                             className="object-cover w-10 h-10 rounded-full"
                             src={teacher.avatar}
-                            alt=""
+                            alt="profile-pic"
                           />
                           <div>
-                            <h2 className="text-sm font-medium text-gray-800 dark:text-white">
+                            <h2 className="ttext-xs font-medium text-gray-800 dark:text-white">
                               {teacher.name}
                             </h2>
                             <p className="text-xs font-normal text-gray-600 dark:text-gray-400">
@@ -163,25 +176,42 @@ const ViewTeachers = () => {
                           </div>
                         </button>
                       </td>
-                      <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap block md:table-cell">
+                      <td className="px-4 py-4 text-xs text-gray-500 dark:text-gray-300 whitespace-nowrap block md:table-cell">
                         <span className="md:hidden font-bold">Gender: </span>
                         {teacher.gender}
                       </td>
-                      <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap block md:table-cell">
+                      <td className="px-4 py-4 text-xs text-gray-500 dark:text-gray-300 whitespace-nowrap block md:table-cell">
                         <span className="md:hidden font-bold">Phone: </span>
                         {teacher.mobile}
                       </td>
-                      <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap block md:table-cell">
-                        <span className="md:hidden font-bold">Department: </span>
-                        {teacher.department}
-                      </td>
-                      <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap block md:table-cell">
-                        <span className="md:hidden font-bold">Date of Birth: </span>
+                      <td className="px-4 py-4 text-xs text-gray-500 dark:text-gray-300 whitespace-nowrap block md:table-cell">
+                        <span className="md:hidden font-bold">
+                          Date of Birth:{" "}
+                        </span>
                         {formattedDOB}
                       </td>
-                      <td className="px-4 py-4 text-sm whitespace-nowrap block md:table-cell">
-                        <button className="px-1 py-1 text-gray-500 transition-colors duration-200 rounded-lg dark:text-gray-300 hover:bg-gray-100">
-                          {/* Action icons */}
+                      <td className="px-4 py-4 text-xs whitespace-nowrap block md:table-cell">
+                        <button>
+                          <svg
+                            className="w-6 h-6 text-gray-800 dark:text-white hover:text-blue-500"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"
+                            />
+                            <path
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                            />
+                          </svg>
                         </button>
                       </td>
                     </tr>

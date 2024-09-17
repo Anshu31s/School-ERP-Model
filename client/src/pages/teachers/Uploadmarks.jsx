@@ -3,12 +3,12 @@ import React, { useState } from "react";
 import axios from "axios";
 
 const Uploadmarks = () => {
-  const { students, loading, error } = GetStudents();
+  const { students, totalStudents, loading, error } = GetStudents();
 
   const [selectedClass, setSelectedClass] = useState("");
   const [selectedStream, setSelectedStream] = useState("");
   const [selectedSubject, setSelectedSubject] = useState("");
-  const [selectedExamType, setSelectedExamType] = useState(""); // New state for exam type
+  const [selectedExamType, setSelectedExamType] = useState("");
   const [marks, setMarks] = useState({});
 
   const classes = ["9", "10", "11", "12"];
@@ -181,7 +181,7 @@ const Uploadmarks = () => {
             </thead>
             <tbody>
               {students
-                .filter((student) => student.current_class === selectedClass && student.active === true)
+                .filter((student) => student.Class === selectedClass && student.active === true)
                 .map((student) => (
                   <tr key={student.userId}>
                     <td className="border border-gray-300 p-2">{student.userId}</td>

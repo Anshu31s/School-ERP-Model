@@ -12,10 +12,10 @@ const useFetchAttendance = () => {
     const fetchAttendance = async () => {
       try {
         const userId = profile?.userId;
-        const currentClass = profile?.current_class;
+        const Class = profile?.Class;
 
         const response = await axios.get('http://localhost:5000/api/protected/get-attendance', {
-          params: { userId, class: currentClass },
+          params: { userId, class: Class },
           withCredentials: true,
         });
         setAttendanceData(response.data);

@@ -9,6 +9,7 @@ export const studentSchema = z.object({
     message: 'Date of Birth is required',
   }),
 
+  Class: z.enum(['9', '10', '11', '12'], 'Please select a class'),
   gender: z.enum(['male', 'female', 'other'], 'Please select a gender'),
 
   blood: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'], 'Please select a blood group'),

@@ -14,6 +14,7 @@ const RegisterStudent = () => {
     { name: 'name', label: 'Name', type: 'text', placeholder: 'Enter name' },
     { name: 'email', label: 'Email', type: 'email', placeholder: 'Enter email' },
     { name: 'dob', label: 'Date of Birth', type: 'date' },
+    { name: 'Class', label: 'Class', type: 'select', options: ['9', '10', '11', '12'] },
     { name: 'gender', label: 'Gender', type: 'select', options: ['male', 'female', 'other'] },
     { name: 'blood', label: 'Blood Group', type: 'select', options: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] },
     { name: 'mobile', label: 'Mobile', type: 'number', placeholder: 'Enter mobile number' },

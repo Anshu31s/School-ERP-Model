@@ -44,7 +44,7 @@ const registerStudent = async (req, res) => {
     father_mobile,
     mother_mobile,
     current_address,
-    current_class,
+    Class,
   } = req.body;
 
   try {
@@ -66,7 +66,7 @@ const registerStudent = async (req, res) => {
       father_mobile,
       mother_mobile,
       current_address,
-      current_class,
+      Class,
       session,
     });
 
@@ -79,7 +79,7 @@ const registerStudent = async (req, res) => {
 
     await Promise.all([NewUser.save(), NewStudent.save()]);
 
-    await sendRegistrationEmail(email, userId);
+    // await sendRegistrationEmail(email, userId);
 
     res.status(201).json({
       success: true,

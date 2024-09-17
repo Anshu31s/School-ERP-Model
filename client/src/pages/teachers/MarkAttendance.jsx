@@ -119,7 +119,7 @@ const UploadAttendance = () => {
                         {selectedClass && (
                             <tbody>
                                 {students
-                                    .filter((student) => student.current_class === selectedClass && student.active === true)
+                                    .filter((student) => student.Class === selectedClass && student.active === true)
                                     .map((student) => (
                                         <tr key={student.userId} className="border-b hover:bg-gray-100">
                                             <td className="p-2">{student.userId}</td>

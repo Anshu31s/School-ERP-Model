@@ -56,7 +56,7 @@ const Sidebar = ({ showSidebar }) => {
   }
   return (
     <>
-      <div className="flex z-10 fixed top-0 left-0 sm:z-10 flex-col mt-10 md:mt-0 md:w-[19%] h-screen px-5 py-8 overflow-y-auto bg-white dark:bg-gray-900 dark:border-gray-700 shadow-lg shadow-gray-500">
+      <div className="flex z-10 fixed top-0 left-0 sm:z-10 flex-col mt-10 md:mt-0 md:w-[15%] h-screen px-5 py-8 overflow-y-auto bg-white dark:bg-gray-900 dark:border-gray-700 shadow-lg shadow-gray-500">
         <div className="flex flex-col justify-between flex-1">
           <nav className="-mx-3 space-y-3">
             {NavItems.map((item) => (
