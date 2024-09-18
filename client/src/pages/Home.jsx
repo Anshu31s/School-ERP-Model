@@ -1,11 +1,11 @@
 import React from "react";
-import GetStudents from "../data/students";
-import GetTeachers from "../data/teachers";
+import Students from "../hooks/Students";
+import GetTeachers from "../hooks/teachers";
 import AdmissionGrowth from "./AdmissionGrowth";
 import GetAttendance from "./ShowAttendace";
 import { useSelector } from "react-redux";
 const Home = () => {
-  const { totalStudents, activeStudents, loading, error } = GetStudents();
+  const { totalStudents, activeStudents, loading, error } = Students();
   const {
     totalTeachers,
     activeTeachers,

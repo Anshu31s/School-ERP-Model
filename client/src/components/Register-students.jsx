@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import useCsrfToken from './auth/csrf';
-import { studentSchema } from './studentSchema';
+import useCsrfToken from './utils/csrf';
+import { studentSchema } from './utils/studentSchema';
 
 const RegisterStudent = () => {
   const csrfToken = useCsrfToken();
@@ -57,7 +57,7 @@ const RegisterStudent = () => {
 
           try {
             // Send form data to backend
-            await axios.post('http://localhost:5000/api/auth/register-student', {
+            await axios.post('http://localhost:5000/api/utils/register-student', {
               ...formData,
             }, {
               headers: {

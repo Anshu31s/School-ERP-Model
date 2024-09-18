@@ -1,7 +1,7 @@
 // StudentGrowthChart.js
 import React from 'react';
 import ApexCharts from 'react-apexcharts';
-import YearlyData from '../data/YearlyData';
+import YearlyData from '../hooks/YearlyData';
 
 const AdmissionGrowth = () => {
   const { yearlyData, loading, error } = YearlyData();

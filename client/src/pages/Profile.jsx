@@ -1,4 +1,4 @@
-import useProfile from '../data/Getprofile';
+import useProfile from '../hooks/Getprofile';
 const Profile = () => {
     const { profile, loading, error } = useProfile();
     if (loading) {

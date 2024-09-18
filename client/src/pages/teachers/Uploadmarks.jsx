@@ -1,9 +1,9 @@
-import GetStudents from "../../data/students";
+import Students from "../../hooks/Students";
 import React, { useState } from "react";
 import axios from "axios";
 
 const Uploadmarks = () => {
-  const { students, totalStudents, loading, error } = GetStudents();
+  const { students, totalStudents, loading, error } = Students();
 
   const [selectedClass, setSelectedClass] = useState("");
   const [selectedStream, setSelectedStream] = useState("");

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { getFormattedDate } from "./Filterdatetime";
-import GetTeachers from "../data/teachers";
+import GetTeachers from "../hooks/teachers";
 
 const ViewTeachers = () => {
   const [searchTerm, setSearchTerm] = useState("");

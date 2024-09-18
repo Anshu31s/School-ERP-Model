@@ -21,7 +21,7 @@ const Forgetpassword = () => {
     const sendEmail = async (email) => {
         try {
             const response = await axios.post(
-                "http://localhost:5000/api/auth/forget-password",
+                "http://localhost:5000/api/utils/forget-password",
                 { email },
                 { withCredentials: true }
             );

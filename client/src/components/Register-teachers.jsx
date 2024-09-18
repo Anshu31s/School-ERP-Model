@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import useCsrfToken from './auth/csrf';
-import { teacherSchema } from './teacherSchema';
+import useCsrfToken from './utils/csrf';
+import { teacherSchema } from './utils/teacherSchema';
 
 const formFields = [
   { label: 'Name', name: 'name', type: 'text', required: true },
@@ -64,7 +64,7 @@ const RegisterTeacher = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/register-teacher', formData, {
+      const response = await axios.post('http://localhost:5000/api/utils/register-teacher', formData, {
         headers: {
           'CSRF-Token': csrfToken,
         },

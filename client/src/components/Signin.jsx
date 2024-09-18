@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom';
-import { loginUser } from './auth/authActions';
-import useCsrfToken from './auth/csrf';
+import { loginUser } from './utils/authActions';
+import useCsrfToken from './utils/csrf';
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);

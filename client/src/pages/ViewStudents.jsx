@@ -1,32 +1,34 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { getFormattedDate } from "./Filterdatetime";
-import GetStudents from "../data/students";
+import Students from "../hooks/Students";
+import StudentDetailPopup from "./StudentDetailPopup";
 
 const ViewStudents = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [genderFilter, setGenderFilter] = useState("All");
-  const [statusFilter, setStatusFilter] = useState("All");
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
-  const { students, loading, error } = GetStudents();
+  const {
+    students,
+    totalPages,
+    loading,
+    error,
+  } = Students(page, limit);
 
-  const filteredStudents = students.filter((student) => {
-    const matchesSearchTerm =
-      student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      student.mobile.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      student.userId.toLowerCase().includes(searchTerm.toLowerCase());
+  const handleViewDetails = (student) => {
+    setSelectedStudent(student);
+    setIsPopupOpen(true);
+  };
 
-    const matchesGenderFilter =
-      genderFilter === "All" ||
-      student.gender.toLowerCase() === genderFilter.toLowerCase();
+  const closePopup = () => {
+    setIsPopupOpen(false);
+    setSelectedStudent(null);
+  };
 
-    const matchesStatusFilter =
-      statusFilter === "All" ||
-      (statusFilter === "true" && student.active) ||
-      (statusFilter === "false" && !student.active);
-
-    return matchesSearchTerm && matchesGenderFilter && matchesStatusFilter;
-  });
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  };
 
   if (loading) {
     return <p>Loading...</p>;
@@ -43,26 +45,16 @@ const ViewStudents = () => {
           <input
             type="text"
             placeholder="Search"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
             className="px-2 md:px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <div>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="md:mr-4 px-2 md:px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
+            <select className="md:mr-4 px-2 md:px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option value="All">All Statuses</option>
               <option value="true">Active</option>
               <option value="false">Inactive</option>
             </select>
 
-            <select
-              value={genderFilter}
-              onChange={(e) => setGenderFilter(e.target.value)}
-              className="px-2 md:px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
+            <select className="px-2 md:px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option value="All">All Genders</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
@@ -71,11 +63,11 @@ const ViewStudents = () => {
         </div>
 
         {/* Table */}
-
         <div className="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-800 hidden md:table-header-group">
+            <thead className="bg-gray-50 dark:bg-gray-800 hidden xl:table-header-group">
               <tr>
+                {/* Table headers */}
                 <th className="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
                   ID
                 </th>
@@ -110,26 +102,26 @@ const ViewStudents = () => {
             </thead>
 
             <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
-              {filteredStudents.map((student, id) => {
+              {students.map((student, id) => {
                 const formattedCreatedAt = getFormattedDate(student.createdAt);
                 const formattedUpdatedAt = getFormattedDate(student.updatedAt);
                 const formattedDOB = getFormattedDate(student.dob);
                 return (
-                  <tr key={id} className="block md:table-row">
-                    <td className="px-4 py-4 text-xs font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap block md:table-cell">
-                      <span className="md:hidden font-bold">ID: </span>
+                  <tr key={id} className="block xl:table-row">
+                    <td className="px-4 py-4 text-xs font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap block xl:table-cell">
+                      <span className="xl:hidden font-bold">ID: </span>
                       {student.userId}
                     </td>
-                    <td className="px-4 py-4 text-xs  text-gray-500 dark:text-gray-300 whitespace-nowrap block md:table-cell">
-                      <span className="md:hidden font-bold">Created At: </span>
+                    <td className="px-4 py-4 text-xs  text-gray-500 dark:text-gray-300 whitespace-nowrap block xl:table-cell">
+                      <span className="xl:hidden font-bold">Created At: </span>
                       {formattedCreatedAt}
                     </td>
-                    <td className="px-4 py-4 text-xs  text-gray-500 dark:text-gray-300 whitespace-nowrap block md:table-cell">
-                      <span className="md:hidden font-bold">Updated At: </span>
+                    <td className="px-4 py-4 text-xs  text-gray-500 dark:text-gray-300 whitespace-nowrap block xl:table-cell">
+                      <span className="xl:hidden font-bold">Updated At: </span>
                       {formattedUpdatedAt}
                     </td>
-                    <td className="px-4 py-4 text-xs font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap block md:table-cell">
-                      <span className="md:hidden font-bold">Status: </span>
+                    <td className="px-4 py-4 text-xs font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap block xl:table-cell">
+                      <span className="xl:hidden font-bold">Status: </span>
                       <div
                         className={`inline-flex items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-gray-800 ${
                           student.active ? "bg-emerald-500" : "bg-red-500"
@@ -150,7 +142,7 @@ const ViewStudents = () => {
                       </div>
                     </td>
 
-                    <td className="px-4 py-4 text-xs  text-gray-500 dark:text-gray-300 whitespace-nowrap block md:table-cell">
+                    <td className="px-4 py-4 text-xs  text-gray-500 dark:text-gray-300 whitespace-nowrap block xl:table-cell">
                       <div className="flex items-center gap-x-2">
                         <img
                           className="object-cover w-10 h-10 rounded-full"
@@ -167,28 +159,28 @@ const ViewStudents = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-4 text-xs  text-gray-500 dark:text-gray-300 whitespace-nowrap block md:table-cell">
-                      <span className="md:hidden font-bold">Gender: </span>
+                    <td className="px-4 py-4 text-xs  text-gray-500 dark:text-gray-300 whitespace-nowrap block xl:table-cell">
+                      <span className="xl:hidden font-bold">Gender: </span>
                       {student.gender}
                     </td>
-                    <td className="px-4 py-4 text-xs  text-gray-500 dark:text-gray-300 whitespace-nowrap block md:table-cell">
-                      <span className="md:hidden font-bold">Phone: </span>
+                    <td className="px-4 py-4 text-xs  text-gray-500 dark:text-gray-300 whitespace-nowrap block xl:table-cell">
+                      <span className="xl:hidden font-bold">Phone: </span>
                       {student.mobile}
                     </td>
-                    <td className="px-4 py-4 text-xs  text-gray-500 dark:text-gray-300 whitespace-nowrap block md:table-cell">
-                      <span className="md:hidden font-bold">
+                    <td className="px-4 py-4 text-xs  text-gray-500 dark:text-gray-300 whitespace-nowrap block xl:table-cell">
+                      <span className="xl:hidden font-bold">
                         Father's Name:{" "}
                       </span>
                       {student.father_name}
                     </td>
-                    <td className="px-4 py-4 text-xs  text-gray-500 dark:text-gray-300 whitespace-nowrap block md:table-cell">
-                      <span className="md:hidden font-bold">
+                    <td className="px-4 py-4 text-xs  text-gray-500 dark:text-gray-300 whitespace-nowrap block xl:table-cell">
+                      <span className="xl:hidden font-bold">
                         Date of Birth:{" "}
                       </span>
                       {formattedDOB}
                     </td>
-                    <td className="px-4 py-4 text-xs  whitespace-nowrap block md:table-cell">
-                      <button>
+                    <td className="px-4 py-4 text-xs  whitespace-nowrap block xl:table-cell">
+                      <button onClick={() => handleViewDetails(student)}>
                         <svg
                           className="w-6 h-6 text-gray-800 dark:text-white hover:text-blue-500"
                           aria-hidden="true"
@@ -198,6 +190,7 @@ const ViewStudents = () => {
                           fill="none"
                           viewBox="0 0 24 24"
                         >
+                          <title>view details</title>
                           <path
                             stroke="currentColor"
                             strokeWidth="2"
@@ -218,6 +211,22 @@ const ViewStudents = () => {
           </table>
         </div>
       </div>
+
+      {/* Pagination */}
+      <div className="flex justify-between mt-4">
+          <button onClick={() => handlePageChange(page > 1 ? page - 1 : 1)} disabled={page === 1} className="px-4 py-2 border rounded-md">
+            Previous
+          </button>
+          <span>Page {page} of {totalPages}</span>
+          <button onClick={() => handlePageChange(page < totalPages ? page + 1 : totalPages)} disabled={page === totalPages} className="px-4 py-2 border rounded-md">
+            Next
+          </button>
+        </div>
+      {/* Popup Component */}
+
+      {isPopupOpen && selectedStudent && (
+        <StudentDetailPopup student={selectedStudent} onClose={closePopup} />
+      )}
     </section>
   );
 };

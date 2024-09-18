@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import useProfile from '../data/Getprofile';
+import useProfile from '../hooks/Getprofile';
 
 const useFetchAttendance = () => {
   const [attendanceData, setAttendanceData] = useState(null);
