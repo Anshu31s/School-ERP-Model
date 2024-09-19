@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 
-const Students = (page = 1, limit = 10) => {
+const Students = (page = 1, limit = 10, searchQuery = "",genderFilter, activeFilter) => {
   const [students, setStudents] = useState([]);
   const [totalStudents, setTotalStudents] = useState(0);
   const [activeStudents, setActiveStudents] = useState(0);
@@ -12,20 +12,27 @@ const Students = (page = 1, limit = 10) => {
   useEffect(() => {
     const getStudents = async () => {
       try {
-        setLoading(true);
         
-        const res = await axios.get('http://localhost:5000/api/protected/Get-students', {
-          params: {
-            page,
-            limit,
-          },
-        });
-        
+
+        const res = await axios.get(
+          "http://localhost:5000/api/protected/Get-students",
+          {
+            params: {
+              page,
+              limit,
+              search: searchQuery,
+              gender: genderFilter,
+              active: activeFilter,
+            },
+          }
+        );
+
         if (res.data.error) {
           throw new Error(res.data.error);
         }
 
-        const { totalStudents, activeStudents, students, totalPages } = res.data;
+        const { totalStudents, activeStudents, students, totalPages } =
+          res.data;
 
         setTotalStudents(totalStudents);
         setActiveStudents(activeStudents);
@@ -35,13 +42,20 @@ const Students = (page = 1, limit = 10) => {
         setError(error.message);
         console.error(error.message);
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     };
 
     getStudents();
-  }, [page, limit]); 
-  return { students, totalStudents, activeStudents, totalPages, loading, error };
+  }, [page, limit, searchQuery, genderFilter, activeFilter]);
+  return {
+    students,
+    totalStudents,
+    activeStudents,
+    totalPages,
+    loading,
+    error,
+  };
 };
 
 export default Students;

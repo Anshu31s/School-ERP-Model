@@ -4,15 +4,26 @@ import Teacher from "../models/teachers.js";
 
 const getstudents = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    
-    const skip = (page - 1) * limit;
-
+    const { page, limit, search, gender, active } = req.query;
     const totalStudents = await Student.countDocuments();
     const activeStudents = await Student.countDocuments({ active: true });
 
-    const students = await Student.find().select("-password").skip(skip).limit(limit);
+    const searchCriteria = {};
+    if (search) {
+      searchCriteria.name = { $regex: `^${search}`, $options: "i" };
+    }
+    if (gender) {
+      searchCriteria.gender = gender;
+    }
+    if (active) {
+      searchCriteria.active = active === 'true';
+    }
+    
+
+    const students = await Student.find(searchCriteria)
+      .select("-password")
+      .skip((page - 1) * limit)
+      .limit(limit);
 
     if (!students || students.length === 0) {
       return res.status(404).json({ message: "No users found" });
@@ -88,10 +99,10 @@ const updatestudent = async (req, res) => {
     }
 
     Object.assign(student, changes);
-    
+
     await student.save();
-    
-    res.status(200).json({success: true});
+
+    res.status(200).json({ success: true });
   } catch (error) {
     console.error("Error updating student:", error);
     res.status(500).json({ message: "Server error" });

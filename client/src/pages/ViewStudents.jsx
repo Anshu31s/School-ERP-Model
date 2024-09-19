@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { getFormattedDate } from "./Filterdatetime";
+
 import Students from "../hooks/Students";
 import StudentDetailPopup from "./StudentDetailPopup";
 
@@ -8,13 +9,17 @@ const ViewStudents = () => {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [genderFilter, setGenderFilter] = useState("");
+  const [statusFilter, setstatusFilter] = useState("");
 
-  const {
-    students,
-    totalPages,
-    loading,
-    error,
-  } = Students(page, limit);
+  const { students, totalPages, loading, error } = Students(
+    page,
+    limit,
+    searchQuery,
+    genderFilter,
+    statusFilter
+  );
 
   const handleViewDetails = (student) => {
     setSelectedStudent(student);
@@ -46,16 +51,26 @@ const ViewStudents = () => {
             type="text"
             placeholder="Search"
             className="px-2 md:px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
           <div>
-            <select className="md:mr-4 px-2 md:px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="All">All Statuses</option>
+            <select
+              className="md:mr-4 px-2 md:px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={statusFilter}
+              onChange={(e) => setstatusFilter(e.target.value)}
+            >
+              <option value="">All Statuses</option>
               <option value="true">Active</option>
               <option value="false">Inactive</option>
             </select>
 
-            <select className="px-2 md:px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="All">All Genders</option>
+            <select
+              className="px-2 md:px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={genderFilter}
+              onChange={(e) => setGenderFilter(e.target.value)}
+            >
+              <option value="">All Genders</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
             </select>
@@ -214,14 +229,26 @@ const ViewStudents = () => {
 
       {/* Pagination */}
       <div className="flex justify-between mt-4">
-          <button onClick={() => handlePageChange(page > 1 ? page - 1 : 1)} disabled={page === 1} className="px-4 py-2 border rounded-md">
-            Previous
-          </button>
-          <span>Page {page} of {totalPages}</span>
-          <button onClick={() => handlePageChange(page < totalPages ? page + 1 : totalPages)} disabled={page === totalPages} className="px-4 py-2 border rounded-md">
-            Next
-          </button>
-        </div>
+        <button
+          onClick={() => handlePageChange(page > 1 ? page - 1 : 1)}
+          disabled={page === 1}
+          className="px-4 py-2 border rounded-md"
+        >
+          Previous
+        </button>
+        <span>
+          Page {page} of {totalPages}
+        </span>
+        <button
+          onClick={() =>
+            handlePageChange(page < totalPages ? page + 1 : totalPages)
+          }
+          disabled={page === totalPages}
+          className="px-4 py-2 border rounded-md"
+        >
+          Next
+        </button>
+      </div>
       {/* Popup Component */}
 
       {isPopupOpen && selectedStudent && (
