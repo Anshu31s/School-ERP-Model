@@ -1,6 +1,3 @@
-Here's an enhanced version of your **School ERP System** overview and documentation. I've made some refinements for clarity, grammar, and flow while maintaining the original structure.
-
----
 
 # School ERP System
 
@@ -60,7 +57,7 @@ This **School Enterprise Resource Planning (ERP) System** is a comprehensive pla
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/school-erp-system.git
+    git clone https://github.com/Anshu31s/School-ERP-Model.git
     cd school-erp-system
     ```
 
