@@ -16,9 +16,8 @@ const getstudents = async (req, res) => {
       searchCriteria.gender = gender;
     }
     if (active) {
-      searchCriteria.active = active === 'true';
+      searchCriteria.active = active;
     }
-    
 
     const students = await Student.find(searchCriteria)
       .select("-password")
@@ -70,19 +69,37 @@ const getNewStudents = async (req, res) => {
 
 const getTeachers = async (req, res) => {
   try {
+    const { page, limit, search, gender, active } = req.query;
+
     const totalTeachers = await Teacher.countDocuments();
     const activeTeachers = await Teacher.countDocuments({ active: true });
 
-    const teachers = await Teacher.find().select("-password");
+    const searchCriteria = {};
+    if (search) {
+      searchCriteria.name = { $regex: `^${search}`, $options: "i" };
+    }
+    if (gender) {
+      searchCriteria.gender = gender;
+    }
+    if (active) {
+      searchCriteria.active = active === "true";
+    }
+
+    const teachers = await Teacher.find(searchCriteria)
+      .select("-password")
+      .skip((page - 1) * limit)
+      .limit(limit);
 
     if (!teachers || teachers.length === 0) {
-      return res.status(404).json({ message: "No users found" });
+      return res.status(404).json({ message: "No teachers found" });
     }
 
     res.status(200).json({
       totalTeachers,
       activeTeachers,
       teachers,
+      currentPage: page,
+      totalPages: Math.ceil(totalTeachers / limit),
     });
   } catch (error) {
     console.error(error);
@@ -108,5 +125,53 @@ const updatestudent = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+const updateTeacher = async (req, res) => {
+  const { userId, ...changes } = req.body;
+  try {
+    const teacher = await Teacher.findOne({ userId });
+    if (!teacher) {
+      return res.status(404).json({ message: "Teacher not found" });
+    }
 
-export { getstudents, getNewStudents, getTeachers, updatestudent };
+    Object.assign(teacher, changes);
+
+    await teacher.save();
+
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.error("Error updating teacher:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const viewstudents = async (req, res) => {
+  const { Class } = req.query;
+  try {
+    const searchCriteria = {};
+
+    if (Class) {
+      searchCriteria.Class = Class;
+      searchCriteria.active = true;
+    }
+
+    const students = await Student.find(searchCriteria).select("-password");
+
+    if (!students || students.length === 0) {
+      return res.status(404).json({ message: "No students found" });
+    }
+ 
+    res.status(200).json({students});
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export {
+  getstudents,
+  getNewStudents,
+  getTeachers,
+  updatestudent,
+  updateTeacher,
+  viewstudents,
+};

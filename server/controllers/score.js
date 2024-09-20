@@ -1,7 +1,7 @@
 import Marks from '../models/marks.js'
 
 const uploadmarks = async (req, res) => {
-    const { class: className, subject, marks, stream } = req.body;
+    const { class: className, subject, marks, examType, stream } = req.body;
    
     if (!className || !subject || !marks) {
         return res.status(400).json({ error: 'Class, subject, and marks are required.' });

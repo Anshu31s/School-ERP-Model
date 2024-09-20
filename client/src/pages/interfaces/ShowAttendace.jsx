@@ -1,6 +1,6 @@
 import React from 'react';
 import ApexCharts from 'react-apexcharts';
-import GetAttendance from '../hooks/GetAttendance';
+import GetAttendance from '../../hooks/GetAttendance';
 
 const ShowAttendance = () => {
   const { attendanceData, error, loading } = GetAttendance();

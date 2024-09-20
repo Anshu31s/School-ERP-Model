@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const StudentDetailPopup = ({ student, onClose, onSubmit = () => {} }) => {
+const TeacherDetailPopup = ({ teacher, onClose, onSubmit = () => {} }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({ ...student });
-  const [originalData, setOriginalData] = useState({ ...student });
+  const [formData, setFormData] = useState({ ...teacher });
+  const [originalData, setOriginalData] = useState({ ...teacher });
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    setFormData({ ...student });
-    setOriginalData({ ...student });
-  }, [student]);
+    setFormData({ ...teacher });
+    setOriginalData({ ...teacher });
+  }, [teacher]);
 
   const formatDateForInput = (date) => {
     return date ? new Date(date).toISOString().split("T")[0] : "";
@@ -22,13 +22,6 @@ const StudentDetailPopup = ({ student, onClose, onSubmit = () => {} }) => {
     { label: "Name", name: "name", type: "text" },
     { label: "Email", name: "email", type: "email" },
     { label: "Phone", name: "mobile", type: "text" },
-    {
-      label: "Class",
-      name: "class",
-      type: "select",
-      options: ["9", "10", "11", "12"],
-    },
-    { label: "Session", name: "session", type: "text" },
     {
       label: "Gender",
       name: "gender",
@@ -75,22 +68,25 @@ const StudentDetailPopup = ({ student, onClose, onSubmit = () => {} }) => {
     const changes = getChangedData();
     if (Object.keys(changes).length > 0) {
       try {
-        const response = await axios.post("http://localhost:5000/api/protected/Update-student", {
-          userId: student.userId,
-          ...changes,
-        });
+        const response = await axios.post(
+          "http://localhost:5000/api/protected/update-teacher",
+          {
+            userId: teacher.userId,
+            ...changes,
+          }
+        );
 
         const { success } = response.data;
         if (success === true) {
           onSubmit(changes);
           setError(null);
-          alert("Student details updated successfully!");
+          alert("Teacher details updated successfully!");
         } else {
-          setError("There was an error updating the student!");
+          setError("There was an error updating the teacher!");
         }
       } catch (error) {
-        setError("There was an error updating the student!");
-        console.error("Error updating student:", error);
+        setError("There was an error updating the teacher!");
+        console.error("Error updating teacher:", error);
       }
     }
     toggleEdit();
@@ -107,8 +103,8 @@ const StudentDetailPopup = ({ student, onClose, onSubmit = () => {} }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white dark:text-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full h-1/2 overflow-y-auto md:h-auto max-w-sm md:max-w-3xl">
-        <h2 className="text-lg font-bold mb-2 text-center">Student Details</h2>
-        <p className="text-sm mt-2 mb-2 text-center">{student.userId}</p>
+        <h2 className="text-lg font-bold mb-2 text-center">Teacher Details</h2>
+        <p className="text-sm mt-2 mb-2 text-center">{teacher.userId}</p>
         {error && <p className="text-red-500 text-center">{error}</p>}
         <div className="md:flex md:flex-wrap gap-6">
           {formFields.map(({ label, name, type, readOnly, options }) => (
@@ -181,4 +177,4 @@ const StudentDetailPopup = ({ student, onClose, onSubmit = () => {} }) => {
   );
 };
 
-export default StudentDetailPopup;
+export default TeacherDetailPopup;

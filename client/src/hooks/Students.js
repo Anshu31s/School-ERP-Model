@@ -15,7 +15,7 @@ const Students = (page = 1, limit = 10, searchQuery = "",genderFilter, activeFil
         
 
         const res = await axios.get(
-          "http://localhost:5000/api/protected/Get-students",
+          "http://localhost:5000/api/protected/get-students",
           {
             params: {
               page,

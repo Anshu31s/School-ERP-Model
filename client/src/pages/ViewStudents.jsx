@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { getFormattedDate } from "./Filterdatetime";
 
 import Students from "../hooks/Students";
-import StudentDetailPopup from "./StudentDetailPopup";
+import StudentDetailPopup from "./interfaces/StudentDetailPopup";
 
 const ViewStudents = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);

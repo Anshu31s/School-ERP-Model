@@ -1,8 +1,8 @@
 import React from "react";
 import Students from "../hooks/Students";
 import GetTeachers from "../hooks/teachers";
-import AdmissionGrowth from "./AdmissionGrowth";
-import GetAttendance from "./ShowAttendace";
+import AdmissionGrowth from "./interfaces/AdmissionGrowth";
+import GetAttendance from "./interfaces/ShowAttendace";
 import { useSelector } from "react-redux";
 const Home = () => {
   const { totalStudents, activeStudents, loading, error } = Students();
